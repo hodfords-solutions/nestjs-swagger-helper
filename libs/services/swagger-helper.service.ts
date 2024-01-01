@@ -189,7 +189,7 @@ export class SwaggerHelper {
 
         this.addHelper();
         SwaggerModule.setup(this.secretDocumentPath, this.app, this.document, {
-            customJs: '../swagger-helper.js',
+            customJs: './swagger-helper.js',
             swaggerOptions: {
                 requestInterceptor: (request) => {
                     request.responseInterceptor = (response) => {
@@ -206,7 +206,7 @@ export class SwaggerHelper {
         let modules = container.getModules();
         let properties = [];
         for (let module of modules.values()) {
-            for (let router of module.routes.values()) {
+            for (let router of module.controllers.values()) {
                 for (let property of Object.getOwnPropertyNames(router.metatype.prototype)) {
                     properties.push({
                         name: property,
