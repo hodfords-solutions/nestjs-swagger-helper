@@ -1,6 +1,6 @@
 {
   "name": "@hodfords/nestjs-swagger-helper",
-  "version": "1.0.0",
+  "version": "8.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
@@ -29,12 +29,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hodfords-solutions/nestjs-cls-translation.git"
+    "url": "git+https://github.com/hodfords-solutions/nestjs-swagger-helper.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hodfords-solutions/nestjs-cls-translation/issues"
+    "url": "https://github.com/hodfords-solutions/nestjs-swagger-helper/issues"
   },
-  "homepage": "https://github.com/hodfords-solutions/nestjs-cls-translation#readme"
+  "homepage": "https://github.com/hodfords-solutions/nestjs-swagger-helper#readme"
 }
