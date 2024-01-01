@@ -1,31 +1,43 @@
 {
   "name": "@hodfords/nestjs-swagger-helper",
-  "version": "8.0.0",
+  "version": "10.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@nestjs/serve-static": "^2.2.2"
+    "@nestjs/serve-static": "4.0.0"
   },
   "devDependencies": {
-    "@nestjs/common": "8.4.7",
-    "@nestjs/core": "8.0.6",
-    "@nestjs/platform-express": "8.0.6",
-    "@nestjs/swagger": "5.0.9",
-    "@types/node": "^16.6.1",
+    "@nestjs/common": "10.2.10",
+    "@nestjs/core": "10.2.10",
+    "@nestjs/platform-express": "10.2.5",
+    "@nestjs/swagger": "7.1.17",
+    "@types/node": "20.10.5",
+    "@typescript-eslint/eslint-plugin": "6.16.0",
+    "@typescript-eslint/parser": "6.16.0",
     "auto-changelog": "2.4.0",
-    "prettier": "^2.6.0",
-    "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.4.0"
+    "cspell": "8.2.3",
+    "eslint": "8.56.0",
+    "eslint-config-prettier": "8.10.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "husky": "8.0.3",
+    "is-ci": "3.0.1",
+    "lint-staged": "15.2.0",
+    "prettier": "3.1.1",
+    "reflect-metadata": "0.1.13",
+    "rimraf": "5.0.5",
+    "typescript": "5.3.3"
   },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
     "postbuild": "cp package.json dist/package.json",
-    "format": "prettier --write \\\"libs/**/*.ts\\\"",
+    "format": "prettier --write \"libs/**/*.ts\"",
     "version": "auto-changelog && git add CHANGELOG.md",
     "release:patch": "git add CHANGELOG.md && npm version patch --tag-version-prefix='' -f -m 'chore: release to %s'",
-    "release:push": "git push --no-verify && git push --tags --no-verify"
+    "release:push": "git push --no-verify && git push --tags --no-verify",
+    "cspell": "cspell --no-must-find-files libs/**/*.{ts,js}",
+    "prepare": "is-ci || husky install",
+    "lint": "eslint \"libs/**/*.ts\" --fix --max-warnings 0"
   },
   "repository": {
     "type": "git",
