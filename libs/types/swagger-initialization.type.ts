@@ -7,4 +7,4 @@ export type SwaggerInitialization = {
     description: string;
     version: string;
     appPrefix?: string;
-}
+};
