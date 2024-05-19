@@ -58,17 +58,27 @@ export class SwaggerHelper {
         const config = new DocumentBuilder()
             .setTitle(this.title)
             .setDescription(this.description)
-            .setVersion(this.version)
-            .addBearerAuth()
-            .build();
+            .setVersion(this.version);
+        this.configSecurity(config);
 
-        let publicDocument = SwaggerModule.createDocument(this.app, config);
+        let publicDocument = SwaggerModule.createDocument(this.app, config.build());
         const allSchemas = publicDocument.components.schemas;
         this.filterPublicDocuments(publicDocument);
         publicDocument.components.schemas = this.getPublicSchema(publicDocument);
         this.getNestedPublicSchemas(publicDocument, allSchemas);
 
         return publicDocument;
+    }
+
+    private configSecurity(config: DocumentBuilder) {
+        if (this.params.addBearerAuth !== false) {
+            config.addBearerAuth();
+        }
+        if (this.params.securities) {
+            for (let security of this.params.securities) {
+                config.addSecurity(security.name, security.options);
+            }
+        }
     }
 
     private getPublicSchema(publicDocument: OpenAPIObject) {
@@ -184,10 +194,9 @@ export class SwaggerHelper {
         const config = new DocumentBuilder()
             .setTitle(this.title)
             .setDescription(this.description)
-            .setVersion(this.version)
-            .addBearerAuth()
-            .build();
-        this.document = SwaggerModule.createDocument(this.app, config);
+            .setVersion(this.version);
+        this.configSecurity(config);
+        this.document = SwaggerModule.createDocument(this.app, config.build());
 
         this.addHelper();
         SwaggerModule.setup(this.secretDocumentPath, this.app, this.document, {
