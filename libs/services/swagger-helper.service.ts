@@ -19,15 +19,17 @@ export class SwaggerHelper {
     private readonly title: string;
     private readonly description: string;
     private readonly version: string;
+    private readonly disablePrivateDocument: boolean;
 
     constructor(private params: SwaggerInitialization) {
-        const { app, appEnv, appPrefix = '', title, description, version } = this.params;
+        const { app, appEnv, appPrefix = '', title, description, version, disablePrivateDocument } = this.params;
         this.app = app;
         this.appEnv = appEnv;
         this.appPrefix = appPrefix;
         this.title = title;
         this.description = description;
         this.version = version;
+        this.disablePrivateDocument = disablePrivateDocument;
     }
 
     get publicDocumentPath() {
@@ -42,7 +44,7 @@ export class SwaggerHelper {
         this.buildPublicDocuments();
         this.logger.log(`Public document is ready at ${this.publicDocumentPath}`);
 
-        if (this.appEnv !== 'production') {
+        if (this.disablePrivateDocument !== true) {
             this.buildPrivateDocuments();
             this.logger.log(`Private document is ready at ${this.secretDocumentPath}`);
         }
