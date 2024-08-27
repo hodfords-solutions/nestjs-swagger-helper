@@ -24,6 +24,7 @@ type SwaggerInitialization = {
     title: string;
     description: string;
     version: string;
+    disablePrivateDocument: boolean;
 };
 
 buildSwagger() {
@@ -33,7 +34,8 @@ buildSwagger() {
         path: `${env.APP_PREFIX}/documents`,
         title: 'Document for usdol',
         description: 'The usdol API description',
-        version: '1.0'
+        version: '1.0',
+        disablePrivateDocument: env.APP_ENV === 'production',
     }).buildDocuments();
 } 
 ```
