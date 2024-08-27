@@ -19,15 +19,17 @@ export class SwaggerHelper {
     private readonly title: string;
     private readonly description: string;
     private readonly version: string;
+    private readonly disablePrivateDocument: boolean;
 
     constructor(private params: SwaggerInitialization) {
-        const { app, appEnv, appPrefix = '', title, description, version } = this.params;
+        const { app, appEnv, appPrefix = '', title, description, version, disablePrivateDocument } = this.params;
         this.app = app;
         this.appEnv = appEnv;
         this.appPrefix = appPrefix;
         this.title = title;
         this.description = description;
         this.version = version;
+        this.disablePrivateDocument = disablePrivateDocument;
     }
 
     get publicDocumentPath() {
@@ -42,7 +44,7 @@ export class SwaggerHelper {
         this.buildPublicDocuments();
         this.logger.log(`Public document is ready at ${this.publicDocumentPath}`);
 
-        if (this.appEnv !== 'production') {
+        if (this.disablePrivateDocument !== true) {
             this.buildPrivateDocuments();
             this.logger.log(`Private document is ready at ${this.secretDocumentPath}`);
         }
@@ -56,17 +58,27 @@ export class SwaggerHelper {
         const config = new DocumentBuilder()
             .setTitle(this.title)
             .setDescription(this.description)
-            .setVersion(this.version)
-            .addBearerAuth()
-            .build();
+            .setVersion(this.version);
+        this.configSecurity(config);
 
-        let publicDocument = SwaggerModule.createDocument(this.app, config);
+        let publicDocument = SwaggerModule.createDocument(this.app, config.build());
         const allSchemas = publicDocument.components.schemas;
         this.filterPublicDocuments(publicDocument);
         publicDocument.components.schemas = this.getPublicSchema(publicDocument);
         this.getNestedPublicSchemas(publicDocument, allSchemas);
 
         return publicDocument;
+    }
+
+    private configSecurity(config: DocumentBuilder) {
+        if (this.params.addBearerAuth !== false) {
+            config.addBearerAuth();
+        }
+        if (this.params.securities) {
+            for (let security of this.params.securities) {
+                config.addSecurity(security.name, security.options);
+            }
+        }
     }
 
     private getPublicSchema(publicDocument: OpenAPIObject) {
@@ -182,14 +194,13 @@ export class SwaggerHelper {
         const config = new DocumentBuilder()
             .setTitle(this.title)
             .setDescription(this.description)
-            .setVersion(this.version)
-            .addBearerAuth()
-            .build();
-        this.document = SwaggerModule.createDocument(this.app, config);
+            .setVersion(this.version);
+        this.configSecurity(config);
+        this.document = SwaggerModule.createDocument(this.app, config.build());
 
         this.addHelper();
         SwaggerModule.setup(this.secretDocumentPath, this.app, this.document, {
-            customJs: '../swagger-helper.js',
+            customJs: './swagger-helper.js',
             swaggerOptions: {
                 requestInterceptor: (request) => {
                     request.responseInterceptor = (response) => {
@@ -206,7 +217,7 @@ export class SwaggerHelper {
         let modules = container.getModules();
         let properties = [];
         for (let module of modules.values()) {
-            for (let router of module.routes.values()) {
+            for (let router of module.controllers.values()) {
                 for (let property of Object.getOwnPropertyNames(router.metatype.prototype)) {
                     properties.push({
                         name: property,

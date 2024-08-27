@@ -1,0 +1,3 @@
+{
+    "libs/**/*.ts": ["cspell --no-must-find-files .", "eslint --fix --max-warnings 0"]
+}

@@ -19,4 +19,3 @@ export function ApiPublicController<T>(appliedMethods?: (keyof T)[]): ClassDecor
         }
     };
 }
-
