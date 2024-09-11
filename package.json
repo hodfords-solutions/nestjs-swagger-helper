@@ -1,6 +1,6 @@
 {
   "name": "@hodfords/nestjs-swagger-helper",
-  "version": "10.1.0",
+  "version": "10.1.1",
   "description": "A tool for enhancing Swagger documentation in NestJS applications",
   "main": "index.js",
   "dependencies": {

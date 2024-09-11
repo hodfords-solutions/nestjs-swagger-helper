@@ -1,19 +1,26 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
+  <a href="http://opensource.hodfords.uk" target="blank"><img src="https://opensource.hodfords.uk/img/logo.svg" width="320" alt="Hodfords Logo" /></a>
 </p>
 
-# Swagger Helper
+<p align="center"> <b>nestjs-swagger-helper</b> streamlines the integration of Swagger documentation in NestJS applications. It provides utilities and decorators to simplify the creation and management of API documentation, making it easier to keep your API specs up-to-date and accessible.</p>
 
-## Description
+## Installation 🤖
 
-### Configuration
-- Create file a file named `swagger-helper.config.ts` with this code below and then add to `app.module.ts` file 
+Install the `nestjs-swagger-helper` package with:
+
+```
+npm install @hodfords/nestjs-swagger-helper --save
+```
+
+Next, create a file named `swagger-helper.config.ts` and add the following code. Then, include it in your `app.module.ts` file:
+
 ```typescript
 // APP_PREFIX is optional, if your application doesn't have this one you can skip
 export const swaggerConfig = SwaggerHelperModule.forRoot(APP_PREFIX);
 ```
 
-- Initialize SwaggerHelper: Import the `SwaggerHelper` and pass these params to initialize it
+Import the `SwaggerHelper` and use it to initialize Swagger
+
 ```typescript
 import { SwaggerHelper } from '@hodfords/nestjs-swagger-helper';
 
@@ -37,10 +44,19 @@ buildSwagger() {
         version: '1.0',
         disablePrivateDocument: env.APP_ENV === 'production',
     }).buildDocuments();
-} 
+}
 ```
 
+## Usage 🚀
+
 ### Decorators
-The library has 2 decorators that you can import to your project
-- @ApiPublic (mark which APIS are for public)
-- @ApiSetValue (usually add to login/signin API to automatically add jwt-token to swagger when requesting successfully)
+
+The library provides two decorators you can use:
+
+-   `@ApiPublic`: Marks APIs as public.
+-   `@ApiSetValue`: Typically used for login/signin APIs to automatically add a JWT token to Swagger when the request is
+    successful.
+
+## License 📝
+
+This project is licensed under the MIT License
