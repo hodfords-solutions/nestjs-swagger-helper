@@ -32,15 +32,15 @@ export class SwaggerHelper {
         this.disablePrivateDocument = disablePrivateDocument;
     }
 
-    get publicDocumentPath() {
+    get publicDocumentPath(): string {
         return `${this.appPrefix}/docs`;
     }
 
-    get secretDocumentPath() {
+    get secretDocumentPath(): string {
         return `${this.appPrefix}/documents`;
     }
 
-    public buildDocuments() {
+    public buildDocuments(): void {
         this.buildPublicDocuments();
         this.logger.log(`Public document is ready at ${this.publicDocumentPath}`);
 
@@ -50,7 +50,7 @@ export class SwaggerHelper {
         }
     }
 
-    buildPublicDocuments() {
+    buildPublicDocuments(): void {
         SwaggerModule.setup(this.publicDocumentPath, this.app, this.getPublicDocument());
     }
 
@@ -61,7 +61,7 @@ export class SwaggerHelper {
             .setVersion(this.version);
         this.configSecurity(config);
 
-        let publicDocument = SwaggerModule.createDocument(this.app, config.build());
+        const publicDocument = SwaggerModule.createDocument(this.app, config.build());
         const allSchemas = publicDocument.components.schemas;
         this.filterPublicDocuments(publicDocument);
         publicDocument.components.schemas = this.getPublicSchema(publicDocument);
@@ -70,20 +70,20 @@ export class SwaggerHelper {
         return publicDocument;
     }
 
-    private configSecurity(config: DocumentBuilder) {
+    private configSecurity(config: DocumentBuilder): void {
         if (this.params.addBearerAuth !== false) {
             config.addBearerAuth();
         }
         if (this.params.securities) {
-            for (let security of this.params.securities) {
+            for (const security of this.params.securities) {
                 config.addSecurity(security.name, security.options);
             }
         }
     }
 
-    private getPublicSchema(publicDocument: OpenAPIObject) {
-        let schemas = {};
-        for (let key of Object.keys(publicDocument.components.schemas)) {
+    private getPublicSchema(publicDocument: OpenAPIObject): Record<string, SchemaObject | ReferenceObject> {
+        const schemas = {};
+        for (const key of Object.keys(publicDocument.components.schemas)) {
             if (this.checkDocumentUseSchema(publicDocument, key)) {
                 schemas[key] = publicDocument.components.schemas[key];
             }
@@ -126,8 +126,8 @@ export class SwaggerHelper {
     private getNestedPublicSchemas(
         publicDocument: OpenAPIObject,
         allSchemas: Record<string, SchemaObject | ReferenceObject>
-    ) {
-        let schemas = {};
+    ): void {
+        const schemas = {};
         for (const key in publicDocument.components.schemas) {
             const schema = publicDocument.components.schemas[key] as SchemaObject;
             for (const property in schema.properties) {
@@ -145,19 +145,19 @@ export class SwaggerHelper {
         }
     }
 
-    private checkDocumentUseSchema(publicDocument: OpenAPIObject, schemaName: string) {
-        let routers = this.getDocumentRouters(publicDocument);
-        for (let router of routers) {
-            for (let contentType in router.action?.requestBody?.content) {
-                let ref = router.action.requestBody.content[contentType]?.schema?.$ref;
+    private checkDocumentUseSchema(publicDocument: OpenAPIObject, schemaName: string): boolean {
+        const routers = this.getDocumentRouters(publicDocument);
+        for (const router of routers) {
+            for (const contentType in router.action?.requestBody?.content) {
+                const ref = router.action.requestBody.content[contentType]?.schema?.$ref;
                 if (ref && ref.endsWith(`/${schemaName}`)) {
                     return true;
                 }
             }
 
-            for (let status in router.action?.responses) {
-                let schemaRef = router.action.responses[status]?.content?.['application/json']?.schema;
-                let ref = schemaRef?.$ref || schemaRef?.items?.$ref;
+            for (const status in router.action?.responses) {
+                const schemaRef = router.action.responses[status]?.content?.['application/json']?.schema;
+                const ref = schemaRef?.$ref || schemaRef?.items?.$ref;
                 if (ref && ref.endsWith(`/${schemaName}`)) {
                     return true;
                 }
@@ -167,17 +167,17 @@ export class SwaggerHelper {
         return false;
     }
 
-    private filterPublicDocuments(publicDocument: OpenAPIObject) {
-        let paths = {};
-        let properties = this.getRouterProperty();
-        for (let property of properties) {
-            let isPublicAPI = Reflect.getMetadata(
+    private filterPublicDocuments(publicDocument: OpenAPIObject): void {
+        const paths = {};
+        const properties = this.getRouterProperty();
+        for (const property of properties) {
+            const isPublicAPI = Reflect.getMetadata(
                 SWAGGER_CONSTANTS.PUBLIC_API,
                 property.router.metatype.prototype[property.name]
             );
             if (isPublicAPI) {
-                let routers = this.getDocumentRouters(publicDocument);
-                for (let router of routers) {
+                const routers = this.getDocumentRouters(publicDocument);
+                for (const router of routers) {
                     if (router.action.operationId === `${property.router.metatype.name}_${property.name}`) {
                         if (!paths.hasOwnProperty(router.path)) {
                             paths[router.path] = {};
@@ -190,7 +190,7 @@ export class SwaggerHelper {
         publicDocument.paths = paths;
     }
 
-    buildPrivateDocuments() {
+    buildPrivateDocuments(): void {
         const config = new DocumentBuilder()
             .setTitle(this.title)
             .setDescription(this.description)
@@ -214,11 +214,11 @@ export class SwaggerHelper {
 
     private getRouterProperty(): { name: string; router: InstanceWrapper }[] {
         const container: NestContainer = (this.app as any).container;
-        let modules = container.getModules();
-        let properties = [];
-        for (let module of modules.values()) {
-            for (let router of module.controllers.values()) {
-                for (let property of Object.getOwnPropertyNames(router.metatype.prototype)) {
+        const modules = container.getModules();
+        const properties = [];
+        for (const module of modules.values()) {
+            for (const router of module.controllers.values()) {
+                for (const property of Object.getOwnPropertyNames(router.metatype.prototype)) {
                     properties.push({
                         name: property,
                         router
@@ -230,10 +230,10 @@ export class SwaggerHelper {
         return properties;
     }
 
-    addHelper() {
-        let properties = this.getRouterProperty();
-        for (let property of properties) {
-            let actionSetValue = Reflect.getMetadata(
+    addHelper(): void {
+        const properties = this.getRouterProperty();
+        for (const property of properties) {
+            const actionSetValue = Reflect.getMetadata(
                 SWAGGER_CONSTANTS.SET_VALUE,
                 property.router.metatype.prototype[property.name]
             );
@@ -244,9 +244,9 @@ export class SwaggerHelper {
     }
 
     private getDocumentRouters(document: OpenAPIObject) {
-        let routers = [];
-        for (let path in document.paths) {
-            for (let method in document.paths[path]) {
+        const routers = [];
+        for (const path in document.paths) {
+            for (const method in document.paths[path]) {
                 routers.push({
                     path: path,
                     method: method,
@@ -257,9 +257,9 @@ export class SwaggerHelper {
         return routers;
     }
 
-    private addCustomValueToDocument(actionSetValue, operationId) {
-        let routers = this.getDocumentRouters(this.document);
-        for (let path of routers) {
+    private addCustomValueToDocument(actionSetValue, operationId): void {
+        const routers = this.getDocumentRouters(this.document);
+        for (const path of routers) {
             if (path.action.operationId === operationId) {
                 if (!path.action.actionSetValue) {
                     path.action.actionSetValue = [];
