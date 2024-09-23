@@ -1,5 +1,5 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
-import {SecuritySchemeObject} from "@nestjs/swagger/dist/interfaces/open-api-spec.interface";
+import { SecuritySchemeObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
 export type SwaggerInitialization = {
     app: NestExpressApplication;
