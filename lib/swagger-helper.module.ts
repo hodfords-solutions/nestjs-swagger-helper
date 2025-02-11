@@ -17,7 +17,7 @@ export class SwaggerHelperModule {
             imports: [
                 ServeStaticModule.forRoot({
                     rootPath: path.resolve(__dirname, 'static'),
-                    renderPath: '/*',
+                    renderPath: '/*staticSwagger',
                     serveRoot
                 })
             ],
