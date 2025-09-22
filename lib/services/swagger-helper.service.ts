@@ -199,9 +199,11 @@ export class SwaggerHelper {
         this.document = SwaggerModule.createDocument(this.app, config.build());
 
         this.addHelper();
+        this.addPermissionsExtension();
         SwaggerModule.setup(this.secretDocumentPath, this.app, this.document, {
             customJs: './swagger-helper.js',
             swaggerOptions: {
+                showExtensions: true,
                 requestInterceptor: (request) => {
                     request.responseInterceptor = (response) => {
                         window.handleRequest(request, response);
@@ -243,6 +245,19 @@ export class SwaggerHelper {
         }
     }
 
+    addPermissionsExtension(): void {
+        const properties = this.getRouterProperty();
+        for (const property of properties) {
+            const permissions = Reflect.getMetadata(
+                SWAGGER_CONSTANTS.PERMISSIONS,
+                property.router.metatype.prototype[property.name]
+            );
+            if (permissions) {
+                this.addPermissionToDocument(permissions, `${property.router.metatype.name}_${property.name}`);
+            }
+        }
+    }
+
     private getDocumentRouters(document: OpenAPIObject) {
         const routers = [];
         for (const path in document.paths) {
@@ -265,6 +280,18 @@ export class SwaggerHelper {
                     path.action.actionSetValue = [];
                 }
                 path.action.actionSetValue.push(actionSetValue);
+            }
+        }
+    }
+
+    private addPermissionToDocument(permissions: string[], operationId: string): void {
+        const routers = this.getDocumentRouters(this.document);
+        for (const path of routers) {
+            if (path.action.operationId === operationId) {
+                if (!path.action['x-permissions']) {
+                    path.action['x-permissions'] = [];
+                }
+                path.action['x-permissions'].push(...permissions);
             }
         }
     }

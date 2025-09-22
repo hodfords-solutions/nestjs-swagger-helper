@@ -56,6 +56,7 @@ The library provides two decorators you can use:
 -   `@ApiPublic`: Marks APIs as public.
 -   `@ApiSetValue`: Typically used for login/signin APIs to automatically add a JWT token to Swagger when the request is
     successful.
+-   `@ApiPermissions`: Used to document the permissions required for accessing specific API endpoints.
 
 ## License 📝
 
