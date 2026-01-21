@@ -202,6 +202,13 @@ export class SwaggerHelper {
             .setDescription(this.description)
             .setVersion(this.version);
         this.configSecurity(config);
+
+        if (this.params.securityRequirements) {
+            for (const securityRequirement of this.params.securityRequirements) {
+                config.addSecurityRequirements(securityRequirement.name, securityRequirement.requirements);
+            }
+        }
+
         this.document = SwaggerModule.createDocument(this.app, config.build());
 
         this.addHelper();
