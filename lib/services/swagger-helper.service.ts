@@ -61,6 +61,12 @@ export class SwaggerHelper {
             .setVersion(this.version);
         this.configSecurity(config);
 
+        if (this.params.securityRequirements) {
+            for (const securityRequirement of this.params.securityRequirements) {
+                config.addSecurityRequirements(securityRequirement.name, securityRequirement.requirements);
+            }
+        }
+
         const publicDocument = SwaggerModule.createDocument(this.app, config.build());
         const allSchemas = publicDocument.components.schemas;
         this.filterPublicDocuments(publicDocument);

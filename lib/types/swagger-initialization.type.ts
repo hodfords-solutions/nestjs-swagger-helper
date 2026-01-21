@@ -10,5 +10,6 @@ export type SwaggerInitialization = {
     appPrefix?: string;
     disablePrivateDocument?: boolean;
     addBearerAuth?: boolean;
+    securityRequirements?: { name: string; requirements?: string[] }[];
     securities?: { name: string; options: SecuritySchemeObject }[];
 };
