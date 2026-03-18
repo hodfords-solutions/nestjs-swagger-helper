@@ -217,6 +217,7 @@ export class SwaggerHelper {
             customJs: './swagger-helper.js',
             swaggerOptions: {
                 showExtensions: true,
+                persistAuthorization: true,
                 requestInterceptor: (request) => {
                     request.responseInterceptor = (response) => {
                         window.handleRequest(request, response);
