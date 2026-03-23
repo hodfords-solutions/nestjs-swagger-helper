@@ -4,10 +4,9 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import { apiReference } from '@scalar/nestjs-api-reference';
 import { SWAGGER_CONSTANTS } from '../constants/swagger-constants';
 import { SwaggerInitialization } from '../types/swagger-initialization.type';
-
-declare let window;
 
 export class SwaggerHelper {
     private logger = new Logger(SwaggerHelper.name);
@@ -40,6 +39,14 @@ export class SwaggerHelper {
         return `${this.appPrefix}/documents`;
     }
 
+    get publicDocumentJsonPath(): string {
+        return `${this.appPrefix}/docs-json`;
+    }
+
+    get secretDocumentJsonPath(): string {
+        return `${this.appPrefix}/documents-json`;
+    }
+
     public buildDocuments(): void {
         this.buildPublicDocuments();
         this.logger.log(`Public document is ready at ${this.publicDocumentPath}`);
@@ -51,7 +58,17 @@ export class SwaggerHelper {
     }
 
     buildPublicDocuments(): void {
-        SwaggerModule.setup(this.publicDocumentPath, this.app, this.getPublicDocument());
+        const publicDocument = this.getPublicDocument();
+        this.app.use(
+            `/${this.publicDocumentPath}`,
+            apiReference({
+                spec: { content: publicDocument },
+                ...this.params.scalarConfig
+            })
+        );
+        this.app.use(`/${this.publicDocumentJsonPath}`, (req, res) => {
+            res.json(publicDocument);
+        });
     }
 
     getPublicDocument(): OpenAPIObject {
@@ -68,6 +85,7 @@ export class SwaggerHelper {
         }
 
         const publicDocument = SwaggerModule.createDocument(this.app, config.build());
+        this.mergeSecurityRequirements(publicDocument);
         const allSchemas = publicDocument.components.schemas;
         this.filterPublicDocuments(publicDocument);
         publicDocument.components.schemas = this.getPublicSchema(publicDocument);
@@ -83,6 +101,55 @@ export class SwaggerHelper {
         if (this.params.securities) {
             for (const security of this.params.securities) {
                 config.addSecurity(security.name, security.options);
+            }
+        }
+    }
+
+    private mergeSecurityRequirements(document: OpenAPIObject): void {
+        if (!this.params.mergeSecurityGroups?.length) {
+            return;
+        }
+
+        const groups = this.params.mergeSecurityGroups.map((group) => new Set(group));
+
+        const globalSecurityMap = new Map<string, string[]>();
+        if (document.security) {
+            for (const requirement of document.security) {
+                for (const [name, scopes] of Object.entries(requirement)) {
+                    globalSecurityMap.set(name, scopes);
+                }
+            }
+        }
+
+        for (const path in document.paths) {
+            for (const method in document.paths[path]) {
+                const operation = document.paths[path][method];
+                if (!operation.security?.length) {
+                    continue;
+                }
+
+                for (const group of groups) {
+                    const merged: Record<string, string[]> = {};
+                    const rest: Record<string, string[]>[] = [];
+
+                    for (const requirement of operation.security) {
+                        const keys = Object.keys(requirement);
+                        if (keys.length === 1 && group.has(keys[0])) {
+                            merged[keys[0]] = requirement[keys[0]];
+                        } else {
+                            rest.push(requirement);
+                        }
+                    }
+
+                    if (Object.keys(merged).length) {
+                        for (const name of group) {
+                            if (!(name in merged)) {
+                                merged[name] = globalSecurityMap.get(name) || [];
+                            }
+                        }
+                        operation.security = [merged, ...rest];
+                    }
+                }
             }
         }
     }
@@ -210,21 +277,18 @@ export class SwaggerHelper {
         }
 
         this.document = SwaggerModule.createDocument(this.app, config.build());
+        this.mergeSecurityRequirements(this.document);
 
-        this.addHelper();
         this.addPermissionsExtension();
-        SwaggerModule.setup(this.secretDocumentPath, this.app, this.document, {
-            customJs: './swagger-helper.js',
-            swaggerOptions: {
-                showExtensions: true,
-                persistAuthorization: true,
-                requestInterceptor: (request) => {
-                    request.responseInterceptor = (response) => {
-                        window.handleRequest(request, response);
-                    };
-                    return request;
-                }
-            }
+        this.app.use(
+            `/${this.secretDocumentPath}`,
+            apiReference({
+                spec: { content: this.document },
+                ...this.params.scalarConfig
+            })
+        );
+        this.app.use(`/${this.secretDocumentJsonPath}`, (req, res) => {
+            res.json(this.document);
         });
     }
 
@@ -244,19 +308,6 @@ export class SwaggerHelper {
         }
 
         return properties;
-    }
-
-    addHelper(): void {
-        const properties = this.getRouterProperty();
-        for (const property of properties) {
-            const actionSetValue = Reflect.getMetadata(
-                SWAGGER_CONSTANTS.SET_VALUE,
-                property.router.metatype.prototype[property.name]
-            );
-            if (actionSetValue) {
-                this.addCustomValueToDocument(actionSetValue, `${property.router.metatype.name}_${property.name}`);
-            }
-        }
     }
 
     addPermissionsExtension(): void {
@@ -284,18 +335,6 @@ export class SwaggerHelper {
             }
         }
         return routers;
-    }
-
-    private addCustomValueToDocument(actionSetValue, operationId): void {
-        const routers = this.getDocumentRouters(this.document);
-        for (const path of routers) {
-            if (path.action.operationId === operationId) {
-                if (!path.action.actionSetValue) {
-                    path.action.actionSetValue = [];
-                }
-                path.action.actionSetValue.push(actionSetValue);
-            }
-        }
     }
 
     private addPermissionToDocument(permissions: string[], operationId: string): void {

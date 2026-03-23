@@ -1,5 +1,6 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { SecuritySchemeObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import { ApiReferenceOptions } from '@scalar/nestjs-api-reference';
 
 export type SwaggerInitialization = {
     app: NestExpressApplication;
@@ -12,4 +13,6 @@ export type SwaggerInitialization = {
     addBearerAuth?: boolean;
     securityRequirements?: { name: string; requirements?: string[] }[];
     securities?: { name: string; options: SecuritySchemeObject }[];
+    mergeSecurityGroups?: string[][];
+    scalarConfig?: Omit<ApiReferenceOptions, 'spec'>;
 };

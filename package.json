@@ -1,10 +1,10 @@
 {
     "name": "@hodfords/nestjs-swagger-helper",
-    "version": "11.0.8",
+    "version": "11.1.0-rc.1",
     "description": "A tool for enhancing Swagger documentation in NestJS applications",
     "main": "index.js",
     "dependencies": {
-        "@nestjs/serve-static": "5.0.4",
+        "@scalar/nestjs-api-reference": "^1.1.4",
         "eslint-config-prettier": "10.1.8"
     },
     "devDependencies": {
@@ -25,6 +25,7 @@
         "prettier": "3.8.1",
         "reflect-metadata": "0.2.2",
         "rimraf": "6.1.2",
+        "ts-node": "^10.9.2",
         "typescript": "5.9.3"
     },
     "scripts": {
@@ -37,7 +38,8 @@
         "release:push": "git push --no-verify && git push --tags --no-verify",
         "cspell": "cspell --no-must-find-files lib/**/*.{ts,js}",
         "prepare": "is-ci || husky",
-        "lint": "eslint \"lib/**/*.ts\" --fix --max-warnings 0"
+        "lint": "eslint \"lib/**/*.ts\" --fix --max-warnings 0",
+        "sample": "ts-node -P sample/tsconfig.json sample/sample.ts"
     },
     "repository": {
         "type": "git",
