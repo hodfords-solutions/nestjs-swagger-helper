@@ -4,8 +4,7 @@
     "description": "A tool for enhancing Swagger documentation in NestJS applications",
     "main": "index.js",
     "dependencies": {
-        "@scalar/nestjs-api-reference": "^1.1.4",
-        "eslint-config-prettier": "10.1.8"
+        "@scalar/nestjs-api-reference": "^1.1.4"
     },
     "devDependencies": {
         "@hodfords/nestjs-eslint-config": "11.0.2",
