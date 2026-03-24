@@ -32,18 +32,30 @@ export class SwaggerHelper {
     }
 
     get publicDocumentPath(): string {
+        if (!this.appPrefix) {
+            return 'docs';
+        }
         return `${this.appPrefix}/docs`;
     }
 
     get secretDocumentPath(): string {
+        if (!this.appPrefix) {
+            return 'documents';
+        }
         return `${this.appPrefix}/documents`;
     }
 
     get publicDocumentJsonPath(): string {
+        if (!this.appPrefix) {
+            return 'docs-json';
+        }
         return `${this.appPrefix}/docs-json`;
     }
 
     get secretDocumentJsonPath(): string {
+        if (!this.appPrefix) {
+            return 'documents-json';
+        }
         return `${this.appPrefix}/documents-json`;
     }
 
