@@ -1,6 +1,6 @@
 {
     "name": "@hodfords/nestjs-swagger-helper",
-    "version": "12.0.0",
+    "version": "12.0.1",
     "description": "A tool for enhancing Swagger documentation in NestJS applications",
     "type": "module",
     "main": "./index.js",
@@ -68,8 +68,5 @@
     "bugs": {
         "url": "https://github.com/hodfords-solutions/nestjs-swagger-helper/issues"
     },
-    "homepage": "https://github.com/hodfords-solutions/nestjs-swagger-helper#readme",
-    "overrides": {
-        "lodash": "4.17.23"
-    }
+    "homepage": "https://github.com/hodfords-solutions/nestjs-swagger-helper#readme"
 }
