@@ -2,11 +2,10 @@ import { Logger } from '@nestjs/common';
 import { NestContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
-import { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import { DocumentBuilder, OpenAPIObject, ReferenceObject, SchemaObject, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
-import { SWAGGER_CONSTANTS } from '../constants/swagger-constants';
-import { SwaggerInitialization } from '../types/swagger-initialization.type';
+import { SWAGGER_CONSTANTS } from '../constants/swagger-constants.js';
+import { SwaggerInitialization } from '../types/swagger-initialization.type.js';
 
 export class SwaggerHelper {
     private logger = new Logger(SwaggerHelper.name);

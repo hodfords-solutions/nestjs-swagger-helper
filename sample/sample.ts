@@ -9,7 +9,7 @@ import {
     ApiPublicController,
     ApiPermissions,
     ApiParamGlobal,
-} from '../lib';
+} from '../lib/index.js';
 
 // ─── DTOs ────────────────────────────────────────────────────────────────────
 

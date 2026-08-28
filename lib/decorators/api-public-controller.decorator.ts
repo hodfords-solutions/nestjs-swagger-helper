@@ -1,4 +1,4 @@
-import { ApiPublic } from './api-public.decorator';
+import { ApiPublic } from './api-public.decorator.js';
 
 export function ApiPublicController<T>(appliedMethods?: (keyof T)[]): ClassDecorator {
     return function (target: any) {
