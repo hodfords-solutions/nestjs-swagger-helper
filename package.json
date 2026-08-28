@@ -68,8 +68,5 @@
     "bugs": {
         "url": "https://github.com/hodfords-solutions/nestjs-swagger-helper/issues"
     },
-    "homepage": "https://github.com/hodfords-solutions/nestjs-swagger-helper#readme",
-    "overrides": {
-        "lodash": "4.17.23"
-    }
+    "homepage": "https://github.com/hodfords-solutions/nestjs-swagger-helper#readme"
 }
