@@ -2,17 +2,32 @@
     "name": "@hodfords/nestjs-swagger-helper",
     "version": "11.1.0-rc.2",
     "description": "A tool for enhancing Swagger documentation in NestJS applications",
-    "main": "index.js",
+    "type": "module",
+    "main": "./index.js",
+    "types": "./index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./index.d.ts",
+            "import": "./index.js",
+            "default": "./index.js"
+        },
+        "./package.json": "./package.json"
+    },
+    "engines": {
+        "node": ">=20.19.0"
+    },
     "dependencies": {
         "@scalar/nestjs-api-reference": "^1.1.4"
     },
     "devDependencies": {
         "@hodfords/nestjs-eslint-config": "11.0.2",
         "@hodfords/nestjs-prettier-config": "11.0.1",
-        "@nestjs/common": "11.1.12",
-        "@nestjs/core": "11.1.12",
-        "@nestjs/platform-express": "11.1.12",
-        "@nestjs/swagger": "11.2.5",
+        "@nestjs/common": "12.0.1",
+        "@nestjs/core": "12.0.1",
+        "@nestjs/platform-express": "12.0.1",
+        "@nestjs/swagger": "12.0.0",
+        "@swc-node/register": "^1.12.1",
+        "@swc/core": "^1.13.5",
         "@types/express-serve-static-core": "5.1.1",
         "@types/node": "25.2.0",
         "auto-changelog": "2.5.0",
@@ -24,8 +39,9 @@
         "prettier": "3.8.1",
         "reflect-metadata": "0.2.2",
         "rimraf": "6.1.2",
-        "ts-node": "^10.9.2",
-        "typescript": "5.9.3"
+        "typescript": "5.9.3",
+        "unplugin-swc": "^1.5.7",
+        "vitest": "^4.1.10"
     },
     "scripts": {
         "prebuild": "rimraf dist",
@@ -38,7 +54,10 @@
         "cspell": "cspell --no-must-find-files lib/**/*.{ts,js}",
         "prepare": "is-ci || husky",
         "lint": "eslint \"lib/**/*.ts\" --fix --max-warnings 0",
-        "sample": "ts-node -P sample/tsconfig.json sample/sample.ts"
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "test:cov": "vitest run --coverage",
+        "sample": "SWC_NODE_PROJECT=./sample/tsconfig.json node --import @swc-node/register/esm-register sample/sample.ts"
     },
     "repository": {
         "type": "git",

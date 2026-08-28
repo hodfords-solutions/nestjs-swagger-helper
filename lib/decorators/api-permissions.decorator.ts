@@ -1,4 +1,4 @@
-import { SWAGGER_CONSTANTS } from '../constants/swagger-constants';
+import { SWAGGER_CONSTANTS } from '../constants/swagger-constants.js';
 
 export function ApiPermissions(permissions: string[]): MethodDecorator {
     return function (target: any, propertyKey?: string | symbol, descriptor?: PropertyDescriptor) {

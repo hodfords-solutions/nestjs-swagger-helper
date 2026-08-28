@@ -4,6 +4,16 @@
 
 <p align="center"> <b>nestjs-swagger-helper</b> streamlines the integration of Swagger documentation in NestJS applications. It provides utilities and decorators to simplify the creation and management of API documentation, making it easier to keep your API specs up-to-date and accessible.</p>
 
+## Requirements 📋
+
+-   This package is **ESM-only** (`"type": "module"`). It cannot be loaded with `require()`.
+-   Node.js `>=20.19.0` (or `>=22.12`, `>=24.15`, `>=26`).
+
+| `@hodfords/nestjs-swagger-helper` | NestJS |
+| --------------------------------- | ------ |
+| `12.x`                            | `12.x` |
+| `11.x`                            | `11.x` |
+
 ## Installation 🤖
 
 Install the `nestjs-swagger-helper` package with:
