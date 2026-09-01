@@ -3,5 +3,5 @@
     "language": "en",
     "words": ["nestjs", "metatype", "HODFORDS", "postbuild"],
     "flagWords": ["hte"],
-    "ignorePaths": ["node_modules", "test", "*.spec.ts"]
+    "ignorePaths": ["node_modules", "test", "*.spec.ts", "package-lock.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"]
 }
